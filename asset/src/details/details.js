@@ -20,20 +20,80 @@ const Details = () => {
     fetchData();
   }, []);
 
-  return (
-    <div>
-      <h1>Cryptocurrency Data</h1>
-      <h1>Bitcoin</h1>
-      <h3>{(cryptoData.data.item.latestRate.amount)}</h3>
-      
-       <h1>Market Cap</h1>
-       <h3>{(cryptoData.data.item.specificData.marketCapInUSD)}</h3>
-      
-       <h1>Circulating Supply</h1>
-       <h3>{(cryptoData.data.item.specificData.circulatingSupply)}</h3>
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
-       <h1>Maximum Supply</h1>
-       <h3>{(cryptoData.data.item.specificData.maxSupply)}</h3>
+  if (!cryptoData || !cryptoData.data || !cryptoData.data.item) {
+    return <div>Data not available</div>;
+  }
+
+  const { latestRate, specificData } = cryptoData.data.item;
+
+  const formatChange = (change) => {
+    const roundedChange = parseFloat(change).toFixed(2);
+    return roundedChange;
+  };
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", fontFamily: "Arial, sans-serif" }}>
+      <div>
+        <h2 style={{ textAlign: "center" }}>BITCOIN</h2>
+        <h2>About Bitcoin</h2>
+        <p>Bitcoin (BTC) is a digital asset, its price now is {latestRate.amount} USD.</p>
+      </div>
+      <div style={{ display: "flex", justifyContent: "center" }}>
+        <table>
+          <thead>
+            <tr>
+              <th colSpan="2">Market Data</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td colSpan="2" style={{ textAlign: "center" }}>
+                <img
+                  src={`data:image/png;base64,${cryptoData.data.item.assetLogo.imageData}`}
+                  alt="Bitcoin"
+                  style={{ width: "100px", height: "100px" }}
+                />
+              </td>
+            </tr>
+            <tr>
+              <td><strong>Value:</strong></td>
+              <td>${latestRate.amount}</td>
+            </tr>
+            <tr>
+              <td><strong>Market Cap:</strong></td>
+              <td>{specificData.marketCapInUSD}</td>
+            </tr>
+            <tr>
+              <td><strong>Asset Type:</strong></td>
+              <td>{specificData.assetType}</td>
+            </tr>
+            <tr>
+              <td><strong>Circulating Supply:</strong></td>
+              <td>{specificData.circulatingSupply}</td>
+            </tr>
+            <tr>
+              <td><strong>Maximum Supply:</strong></td>
+              <td>{specificData.maxSupply}</td>
+            </tr>
+            <tr>
+              <td><strong>Change (1 Hour):</strong></td>
+              <td>{formatChange(specificData["1HourPriceChangeInPercentage"])}%</td>
+            </tr>
+            <tr>
+              <td><strong>Change (1 Day):</strong></td>
+              <td>{formatChange(specificData["24HoursPriceChangeInPercentage"])}%</td>
+            </tr>
+            <tr>
+              <td><strong>Change (1 Week):</strong></td>
+              <td>{formatChange(specificData["1WeekPriceChangeInPercentage"])}%</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
